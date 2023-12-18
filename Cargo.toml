@@ -6,9 +6,12 @@ edition = "2021"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/moulo1982/pathfinding.git"
+rust-version = "1.74.1"
+categories = ["algorithms"]
 description = """
 一个寻路库，包含AStar和Recast，目前还在开发阶段
 """
+
 [[example]]
 name = "astar"
 path = "examples/a_star.rs"
