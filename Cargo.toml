@@ -6,5 +6,13 @@ edition = "2021"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/moulo1982/pathfinding.git"
+description = """
+一个寻路库，包含AStar和Recast，目前还在开发阶段
+"""
+[[example]]
+
+[[test]]
+
+[[bench]]
 
 [dependencies]
