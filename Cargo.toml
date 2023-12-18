@@ -10,9 +10,15 @@ description = """
 一个寻路库，包含AStar和Recast，目前还在开发阶段
 """
 [[example]]
+name = "astar"
+path = "examples/a_star.rs"
 
 [[test]]
+name = "bench"
+path = "tests/benchmark.rs"
 
 [[bench]]
+name = "bench"
+path = "tests/benchmark.rs"
 
 [dependencies]
