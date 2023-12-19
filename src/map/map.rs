@@ -34,9 +34,9 @@ impl Map {
         let open_list = RefCell::new(OpenList::new());
         let close_list = RefCell::new(OpenList::new());
 
-        open_list.borrow_mut().insert(start.borrow().f(start.clone(), end.clone()), start.clone());
+        open_list.borrow_mut().insert(&start, &end, start.clone());
 
-        while open_list.borrow().len() > 0 && !open_list.borrow().contains_point(end.clone()){
+        while open_list.borrow().len() > 0 && !open_list.borrow().contains_point(&end){
 
             let min_f = open_list.borrow_mut().min_f().unwrap();
 
@@ -45,16 +45,16 @@ impl Map {
                 //1：是个合法的点，2：openList中不存在，3：closeList不存在
                 {
                     let borrow = open_list.borrow();
-                    if !self.in_map(one.clone()) || borrow.contains_point(one.clone()) || borrow.contains_point(one.clone()) {
+                    if !self.in_map(one.clone()) || borrow.contains_point(&one) || borrow.contains_point(&one) {
                         continue
                     }
                 }
 
                 one.borrow_mut().set_parent(min_f.clone());
-                open_list.borrow_mut().insert(one.borrow().f(start.clone(), end.clone()), one.clone());
+                open_list.borrow_mut().insert(&start, &end, one);//one直接移动到函数内，插入到列表中，后面不用了
             }
 
-            close_list.borrow_mut().insert(min_f.borrow().f(start.clone(), end.clone()), min_f.clone());
+            close_list.borrow_mut().insert(&start, &end, min_f);//min_f直接移动到函数内，插入到列表中，后面不用了
         }
 
         let x = open_list.borrow().to_array(); x

@@ -18,15 +18,19 @@ impl Point {
         Rc::new(RefCell::new(Point{x, y, parent:None}))
     }
 
-    pub fn f(&self, start: PointType, end: PointType) -> i64 {
+    pub fn with_more_details(x: i64, y:i64, parent: Option<PointType>) -> PointType {
+        Rc::new(RefCell::new(Point{x, y, parent}))
+    }
+
+    pub fn f(&self, start: &PointType, end: &PointType) -> i64 {
         self.g(start) + self.h(end)
     }
 
-    pub fn g(&self, start: PointType) -> i64 {
+    pub fn g(&self, start: &PointType) -> i64 {
         (self.x - start.borrow().x).abs() + (self.y - start.borrow().y).abs()
     }
 
-    pub fn h(&self, end: PointType) -> i64 {
+    pub fn h(&self, end: &PointType) -> i64 {
         (end.borrow().x - self.x).abs() + (end.borrow().y - self.y).abs()
     }
 
