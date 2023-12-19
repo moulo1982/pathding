@@ -1,5 +1,5 @@
 use std::collections::{BTreeMap};
-use crate::map::{PointType};
+use crate::map::{Point, PointType};
 
 #[derive(Clone)]
 pub struct OpenList {
@@ -11,12 +11,12 @@ impl OpenList {
         OpenList{points: BTreeMap::new()}
     }
 
-    pub fn insert_by_key(&mut self, key: i64, value: PointType) -> Option<PointType> {
-        self.points.insert(key, value)
+    pub fn insert_by_key(&mut self, key: i64, value: Point) -> Option<PointType> {
+        self.points.insert(key, value.into_rc())
     }
 
-    pub fn insert(&mut self, start: &PointType, end: &PointType, value: PointType) -> Option<PointType> {
-        let f = value.borrow().f(start, end);
+    pub fn insert(&mut self, start: &Point, end: &Point, value: Point) -> Option<PointType> {
+        let f = value.f(start, end);
         self.insert_by_key(f, value)
     }
 
@@ -28,9 +28,9 @@ impl OpenList {
         self.points.pop_first().map(|value| value.1 )
     }
 
-    pub fn contains_point(&self, point: &PointType) -> bool{
+    pub fn contains_point(&self, point: &Point) -> bool{
         let result = self.points.iter().find_map(|v| {
-            if *v.1.borrow() == *point.borrow() {
+            if &*v.1.borrow() == point {
                 Some(v)
             } else {
                 None

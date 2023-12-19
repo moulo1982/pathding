@@ -15,7 +15,7 @@ fn main() {
 
     map.load(map_info);
 
-    let result = map.find(map::Point::new(1, 0).clone(), map::Point::new(6, 7).clone());
+    let result = map.find(&map::Point::new(1, 0), &map::Point::new(6, 7));
 
     println!("{:?}", result);
 }
