@@ -15,9 +15,7 @@ fn main() {
 
     map.load(map_info);
 
-    let result = map.find(map::Point { x: 1, y: 0, parent: None }, map::Point { x: 6, y: 7, parent: None});
-
-    map.drop
+    let result = map.find(map::Point::new(1, 0).clone(), map::Point::new(6, 7).clone());
 
     println!("{:?}", result);
 }

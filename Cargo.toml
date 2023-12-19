@@ -16,12 +16,4 @@ description = """
 name = "astar"
 path = "examples/a_star.rs"
 
-[[test]]
-name = "bench"
-path = "tests/benchmark.rs"
-
-[[bench]]
-name = "bench"
-path = "tests/benchmark.rs"
-
 [dependencies]

@@ -1,32 +1,36 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 
-#[derive(Debug, Hash, Clone, Copy, Default, PartialOrd, Ord, PartialEq, Eq)]
-#[allow(unused_lifetimes)]
-pub struct Point<'b, 'a:'b> {
+pub type PointType = Rc<RefCell<Point>>;
+
+#[derive(Debug, Clone, Default, PartialOrd, Ord, PartialEq, Eq)]
+pub struct Point {
     pub x: i64,
     pub y: i64,
 
-    pub parent: Option<&'b Point<'a, 'b>>,
+    pub parent: Option<PointType>,
 }
 
-impl<'a, 'b> Point<'a, 'b> {
 
-    pub fn new(x: i64, y:i64) -> Self {
-        Point{x, y, parent:None}
+impl Point {
+
+    pub fn new(x: i64, y:i64) -> PointType {
+        Rc::new(RefCell::new(Point{x, y, parent:None}))
     }
 
-    pub fn f(&self, start: &Point, end: &Point) -> i64 {
+    pub fn f(&self, start: PointType, end: PointType) -> i64 {
         self.g(start) + self.h(end)
     }
 
-    pub fn g(&self, start: &Point) -> i64 {
-        (self.x - start.x).abs() + (self.y - start.y).abs()
+    pub fn g(&self, start: PointType) -> i64 {
+        (self.x - start.borrow().x).abs() + (self.y - start.borrow().y).abs()
     }
 
-    pub fn h(&self, end: &Point) -> i64 {
-        (end.x - self.x).abs() + (end.y - self.y).abs()
+    pub fn h(&self, end: PointType) -> i64 {
+        (end.borrow().x - self.x).abs() + (end.borrow().y - self.y).abs()
     }
 
-    pub fn neighbors(&self) -> Vec<Point> {
+    pub fn neighbors(&self) -> Vec<PointType> {
         let neighbors = vec![
             Point::new(self.x - 1, self.y),
             Point::new(self.x + 1, self.y),
@@ -36,7 +40,8 @@ impl<'a, 'b> Point<'a, 'b> {
         neighbors
     }
 
-    pub fn parent(&mut self, parent: &'a Point) where 'a : 'b{
+    pub fn set_parent(&mut self, parent: Rc<RefCell<Point>>)
+    {
         self.parent = Some(parent)
     }
 }

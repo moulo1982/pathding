@@ -1,17 +1,17 @@
-use std::collections::{BTreeMap, BTreeSet};
-use crate::map::Point;
+use std::collections::{BTreeMap};
+use crate::map::{PointType};
 
 #[derive(Clone)]
-pub struct OpenList<'a, 'b> {
-    points: BTreeMap<i64, Point<'a, 'b>>,
+pub struct OpenList {
+    points: BTreeMap<i64, PointType>,
 }
 
-impl<'a, 'b> OpenList<'a, 'b> {
+impl OpenList {
     pub fn new() -> Self {
         OpenList{points: BTreeMap::new()}
     }
 
-    pub fn insert(&mut self, key: i64, value: Point<'a, 'b>) -> Option<Point> {
+    pub fn insert(&mut self, key: i64, value: PointType) -> Option<PointType> {
         self.points.insert(key, value)
     }
 
@@ -19,13 +19,13 @@ impl<'a, 'b> OpenList<'a, 'b> {
         self.points.len()
     }
 
-    pub fn min_f(&mut self) -> Option<Point> {
+    pub fn min_f(&mut self) -> Option<PointType> {
         self.points.pop_first().map(|value| value.1 )
     }
 
-    pub fn contains_point(&self, point: &Point) -> bool{
+    pub fn contains_point(&self, point: PointType) -> bool{
         let result = self.points.iter().find_map(|v| {
-            if v.1 == point {
+            if *v.1.borrow() == *point.borrow() {
                 Some(v)
             } else {
                 None
@@ -38,11 +38,11 @@ impl<'a, 'b> OpenList<'a, 'b> {
         }
     }
 
-    pub fn to_array(&self) -> Vec<Point> {
+    pub fn to_array(&self) -> Vec<PointType> {
         self.points.clone().into_values().collect()
     }
 }
 
-struct CloseList {
+/*struct CloseList {
 
-}
+}*/
