@@ -1,5 +1,5 @@
 use std::collections::{BTreeMap};
-use crate::map::{Point, PointType};
+use crate::map::{Point, PointType, point::PointTypeEQPoint};
 
 #[derive(Clone)]
 pub struct OpenList {
@@ -29,18 +29,14 @@ impl OpenList {
     }
 
     pub fn contains_point(&self, point: &Point) -> bool{
-        let result = self.points.iter().find_map(|v| {
-            if &*v.1.borrow() == point {
-                Some(v)
-            } else {
-                None
-            }
-        });
 
-        match result {
-            None => false,
-            Some(_) => true
+        for (_, value) in self.points.iter() {
+            if point.is_equal(value) {
+                return true;
+            }
         }
+
+        false
     }
 
     pub fn to_array(&self) -> Vec<PointType> {

@@ -3,12 +3,25 @@ use std::rc::Rc;
 
 pub type PointType = Rc<RefCell<Point>>;
 
-#[derive(Debug, Clone, Default, PartialOrd, Ord, PartialEq, Eq)]
+#[derive(Debug, Clone, Default)]
 pub struct Point {
     pub x: i64,
     pub y: i64,
 
     pub parent: Option<PointType>,
+}
+
+impl PartialEq for Point {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+
+    fn ne(&self, other: &Self) -> bool {
+        self.x != other.x || self.y != other.y
+    }
+}
+
+impl Eq for Point {
 }
 
 impl Point {
@@ -48,5 +61,25 @@ impl Point {
 
     pub fn set_parent(&mut self, parent: PointType) {
         self.parent = Some(parent)
+    }
+}
+
+pub trait PointTypeEQPoint<T> {
+    fn is_equal(&self, other: &T) -> bool;
+}
+
+pub trait PointEQ<T> {
+    fn is_equal(&self, other: &T) -> bool;
+}
+
+impl PointTypeEQPoint<PointType> for Point {
+    fn is_equal(&self, other: &PointType) -> bool {
+        self.x == *&other.borrow().x && self.y == *&other.borrow().y
+    }
+}
+
+impl PointEQ<Point> for PointType {
+    fn is_equal(&self, other: &Point) -> bool {
+        other.x == *&self.borrow().x && other.y == *&self.borrow().y
     }
 }
