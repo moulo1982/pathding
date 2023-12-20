@@ -46,7 +46,7 @@ impl Point {
         ]
     }
 
-    pub fn set_parent(&mut self, parent: Rc<RefCell<Point>>) {
+    pub fn set_parent(&mut self, parent: PointType) {
         self.parent = Some(parent)
     }
 }

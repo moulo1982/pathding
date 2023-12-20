@@ -42,12 +42,9 @@ impl Map {
 
             let neighbors = min_f.borrow().neighbors();
             for mut one in neighbors {
-                //1：是个合法的点，2：openList中不存在，3：closeList不存在
-                {
-                    let borrow = open_list.borrow();
-                    if !self.in_map(&one) || borrow.contains_point(&one) || borrow.contains_point(&one) {
-                        continue
-                    }
+
+                if !self.in_map(&one) || open_list.borrow().contains_point(&one) || open_list.borrow().contains_point(&one) {
+                    continue
                 }
 
                 one.set_parent(min_f.clone());
