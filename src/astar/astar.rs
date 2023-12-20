@@ -9,7 +9,7 @@ pub trait AStar {
 
 impl AStar for Map {
     fn new_astar() -> Box<dyn AStar> {
-        Map::new()
+        Box::new(Map { points: Vec::new() })
     }
     fn load(&mut self, points: Vec<Vec<i32>>) {
         self.points = points;

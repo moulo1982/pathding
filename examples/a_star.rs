@@ -12,7 +12,7 @@ fn main() {
         0, 0, 0, 1, 0, 1, 0, 1;
     ];
 
-    let mut map: Box<dyn AStar> = map::Map::new();
+    let mut map = map::Map::new_astar();
 
     map.load(map_info);
 

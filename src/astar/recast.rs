@@ -1,5 +1,4 @@
-use std::cell::RefCell;
-use crate::map::{Map, OpenList, Point, PointType};
+use crate::map::{Map, Point, PointType};
 
 pub trait Recast {
     fn new_recast() -> Box<dyn Recast> where Self: Sized;
@@ -9,14 +8,15 @@ pub trait Recast {
 
 impl Recast for Map {
     fn new_recast() -> Box<dyn Recast> {
-        Map::new()
+        Box::new(Map { points: Vec::new() })
     }
+
     fn load(&mut self, points: Vec<Vec<i32>>) {
         self.points = points;
     }
-    fn find_path(&self, start: &Point, end: &Point) -> Vec<PointType> {
-
-        let open_list = RefCell::new(OpenList::new());
+    fn find_path(&self, _start: &Point, _end: &Point) -> Vec<PointType> {
+        Vec::default()
+        /*let open_list = RefCell::new(OpenList::new());
         let close_list = RefCell::new(OpenList::new());
 
         open_list.borrow_mut().insert(&start, &end, start.clone());
@@ -39,6 +39,6 @@ impl Recast for Map {
             close_list.borrow_mut().insert(&start, &end, min_f.take());//min_f直接移动到函数内，插入到列表中，后面不用了
         }
 
-        let x = open_list.borrow().to_array(); x
+        let x = open_list.borrow().to_array(); x*/
     }
 }

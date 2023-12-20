@@ -11,9 +11,6 @@ impl Drop for Map {
 }
 
 impl Map {
-    pub fn new() -> Box<Self> {
-        Box::new(Map { points: Vec::new() })
-    }
 
     pub fn in_map(&self, point:&Point) -> bool {
         let borrow = point;//.borrow();
