@@ -1,4 +1,5 @@
 use game_pathfinding::{map, vec2d, astar::AStar};
+use game_pathfinding::map::Map;
 
 fn main() {
     let map_info = vec2d![
@@ -12,7 +13,7 @@ fn main() {
         0, 0, 0, 1, 0, 1, 0, 1;
     ];
 
-    let mut map = map::Map::new_astar();
+    let mut map = AStar::new();
 
     map.load(map_info);
 

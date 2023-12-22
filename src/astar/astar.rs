@@ -1,15 +1,13 @@
 use std::cell::RefCell;
 use crate::map::{Map, OpenList, Point, PointType};
 
-pub trait AStar {
-    fn new_astar() -> Box<dyn AStar> where Self: Sized;
-    fn load(&mut self, points: Vec<Vec<i32>>);
-    fn find_path(&self, start: &Point, end: &Point) -> Vec<PointType>;
+pub struct  AStar {
+    pub points: Vec<Vec<i32>>,
 }
 
-impl AStar for Map {
-    fn new_astar() -> Box<dyn AStar> {
-        Box::new(Map { points: Vec::new() })
+impl Map for AStar {
+    fn new() -> Box<dyn Map> {
+        Box::new(AStar { points: Vec::new() })
     }
     fn load(&mut self, points: Vec<Vec<i32>>) {
         self.points = points;
@@ -40,5 +38,19 @@ impl AStar for Map {
         }
 
         let x = open_list.borrow().to_array(); x
+    }
+
+    fn in_map(&self, point:&Point) -> bool {
+        let borrow = point;//.borrow();
+        if borrow.x < 0 || borrow.y < 0 {return false}
+        if borrow.x > self.points.len() as i64 || borrow.x > self.points[0].len()  as i64 {return false}
+        if self.points[borrow.x as usize][borrow.y as usize] == 1 {return false}
+        true
+    }
+}
+
+impl Drop for AStar {
+    fn drop(&mut self) {
+        self.points.clear()
     }
 }
