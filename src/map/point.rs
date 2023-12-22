@@ -64,22 +64,14 @@ impl Point {
     }
 }
 
-pub trait PointTypeEQPoint<T> {
-    fn is_equal(&self, other: &T) -> bool;
-}
-
-pub trait PointEQ<T> {
-    fn is_equal(&self, other: &T) -> bool;
-}
-
-impl PointTypeEQPoint<PointType> for Point {
-    fn is_equal(&self, other: &PointType) -> bool {
+impl PartialEq<PointType> for Point {
+    fn eq(&self, other: &PointType) -> bool {
         self.x == *&other.borrow().x && self.y == *&other.borrow().y
     }
 }
 
-impl PointEQ<Point> for PointType {
-    fn is_equal(&self, other: &Point) -> bool {
-        other.x == *&self.borrow().x && other.y == *&self.borrow().y
+impl PartialEq<Point> for PointType {
+    fn eq(&self, other: &Point) -> bool {
+        other == self
     }
 }

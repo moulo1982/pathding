@@ -1,5 +1,5 @@
 use std::collections::{BTreeMap};
-use crate::map::{Point, PointType, point::PointTypeEQPoint};
+use crate::map::{Point, PointType};
 
 #[derive(Clone)]
 pub struct OpenList {
@@ -31,7 +31,7 @@ impl OpenList {
     pub fn contains_point(&self, point: &Point) -> bool{
 
         for (_, value) in self.points.iter() {
-            if point.is_equal(value) {
+            if point == value {
                 return true;
             }
         }
