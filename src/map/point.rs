@@ -1,7 +1,8 @@
 use std::cell::RefCell;
-use std::rc::Rc;
+use std::sync::Arc;
+use tokio::sync::RwLock;
 
-pub type PointType = Rc<RefCell<Point>>;
+pub type PointType = Arc<RwLock<RefCell<Point>>>;
 
 #[derive(Debug, Clone, Default)]
 pub struct Point {
@@ -35,7 +36,7 @@ impl Point {
     }
 
     pub fn into_rc(self) -> PointType {
-        Rc::new(RefCell::new(self))
+        Arc::new(RwLock::new(RefCell::new(self)))
     }
 
     pub fn f(&self, start: &Point, end: &Point) -> i64 {
@@ -66,7 +67,7 @@ impl Point {
 
 impl PartialEq<PointType> for Point {
     fn eq(&self, other: &PointType) -> bool {
-        self.x == *&other.borrow().x && self.y == *&other.borrow().y
+        self.x == other.try_read().unwrap().borrow().x && self.y == other.try_read().unwrap().borrow().y
     }
 }
 
