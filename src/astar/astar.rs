@@ -1,16 +1,18 @@
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, RwLock};
+use crate::errors::my_errors::RetResult;
 use crate::map::{Map, OpenList, Point, PointType};
 
 pub struct  AStar {
-    pub points: Vec<Vec<i32>>,
+    pub points: Arc<RwLock<Vec<Vec<i32>>>>,
 }
 
 impl Map for AStar {
-    fn new() -> Arc<Mutex<dyn Map>> {
-        Arc::new(Mutex::new(AStar { points: Vec::new() }))
+    fn new() -> Arc<RwLock<dyn Map>> {
+        Arc::new(RwLock::new(AStar { points: Arc::new(RwLock::new(vec![])) }))
     }
-    fn load(&mut self, points: Vec<Vec<i32>>) {
-        self.points = points;
+    fn load(&mut self, points: Vec<Vec<i32>>) -> RetResult<()> {
+        self.points = Arc::new(RwLock::new(points));
+        Ok(())
     }
     fn find_path(&self, start: &Point, end: &Point) -> Vec<PointType> {
 
@@ -45,14 +47,14 @@ impl Map for AStar {
     fn in_map(&self, point:&Point) -> bool {
         let borrow = point;//.borrow();
         if borrow.x < 0 || borrow.y < 0 {return false}
-        if borrow.x > self.points.len() as i64 || borrow.x > self.points[0].len()  as i64 {return false}
-        if self.points[borrow.x as usize][borrow.y as usize] == 1 {return false}
+        if borrow.x > self.points.read().unwrap().len() as i64 || borrow.x > self.points.read().unwrap()[0].len()  as i64 {return false}
+        if self.points.read().unwrap()[borrow.x as usize][borrow.y as usize] == 1 {return false}
         true
     }
 }
 
 impl Drop for AStar {
     fn drop(&mut self) {
-        self.points.clear()
+        self.points.write().unwrap().clear()
     }
 }

@@ -23,4 +23,5 @@ path = "examples/recast.rs"
 [dependencies]
 lazy_static = "1.4.0"
 async_once = "0.2.6"
-tokio = { version = "1.35", features = ["full"] }
+tokio = { version = "1.35.1", features = ["full"] }
+thiserror = "1.0.51"

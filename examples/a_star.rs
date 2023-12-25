@@ -15,15 +15,18 @@ async fn main() {
         0, 0, 0, 1, 0, 1, 0, 1;
     ];
 
-    let mut map = MapManager::new();
-    let mm = map.new_astar();
-    map.load(mm, map_info);
+    let map = MapManager::new();
+    let mm = map.write().unwrap().new_astar();
+    if let Err(err) = map.write().unwrap().load(mm, map_info) {
+        println!("{}", err);
+        return;
+    }
 
     let threads: Vec<_> = (0..5)
         .map(|i| {
             let map = map.clone();
             thread::spawn(move || {
-                let result = map.find_path(mm, &map::Point::new(1, 0), &map::Point::new(6, 7));
+                let result = map.read().unwrap().find_path(mm, &map::Point::new(1, 0), &map::Point::new(6, 7));
                 println!("{}, {:?}", i, result);
             })
         })
