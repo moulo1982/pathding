@@ -18,4 +18,6 @@ pub type RetResult<T> = Result<T, RetErr>;
 pub enum MyError {
     #[error("地图{0}不存在")]
     MapNotExist(InstanceIdType),
+    #[error("系统错误：{0}")]
+    UnknownErr(String),
 }

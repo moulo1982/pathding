@@ -17,6 +17,8 @@ pub struct IdGenerator {
     instance_id_value: u32
 }
 
+pub const MAX_VALUE_U32: u32 = u32::MAX;
+
 impl IdGenerator {
     pub fn new() -> Arc<RwLock<Self>> {
         let epoch_this_year = Utc.with_ymd_and_hms(Utc::now().year(), 1, 1, 0, 0, 0).unwrap().timestamp();
@@ -29,13 +31,11 @@ impl IdGenerator {
         Arc::new(RwLock::new(IdGenerator{epoch_this_year, last_instance_id_time, instance_id_value:0}))
     }
 
-    fn time_since_this_year(&self) -> u64
-    {
+    fn time_since_this_year(&self) -> u64 {
         (Utc::now().timestamp() - self.epoch_this_year) as u64
     }
 
-    pub fn generate_instance_id(&mut self) -> InstanceIdType
-    {
+    pub fn generate_instance_id(&mut self) -> InstanceIdType {
         let time = self.time_since_this_year();
         if time > self.last_instance_id_time {
             self.last_instance_id_time = time;
@@ -43,7 +43,7 @@ impl IdGenerator {
         }
         else {
             self.instance_id_value += 1;
-            if self.instance_id_value > 0xffff - 1 // 18bit
+            if self.instance_id_value > MAX_VALUE_U32 - 1
             {
                 self.last_instance_id_time = self.last_instance_id_time + 1; // 借用下一秒
                 self.instance_id_value = 0;
@@ -52,7 +52,6 @@ impl IdGenerator {
             }
         }
 
-        let id = InstanceIdStruct::new_from_more(self.last_instance_id_time, 1, self.instance_id_value);
-        id.into()
+        InstanceIdStruct::new_from_more(self.last_instance_id_time, 1, self.instance_id_value).into()
     }
 }

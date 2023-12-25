@@ -54,14 +54,18 @@ impl MapManager {
         let res = self.map_collections.get(&map_id);
         match res {
             None => Err(MyError::MapNotExist(map_id).into()),
-            Some(m) => m.clone().write().unwrap().load(points)
+            Some(m) => m.clone().write().map_or_else(
+                |e| Err(MyError::UnknownErr(e.to_string()).into()),
+                |mut v| v.load(points))
         }
     }
     pub fn find_path(&self, map_id: InstanceIdType, start: &Point, end: &Point) -> RetResult<Vec<PointType>> {
         let res = self.map_collections.get(&map_id);
         match res {
             None => Err(MyError::MapNotExist(map_id).into()),
-            Some(m) => return Ok(m.clone().read().unwrap().find_path(start, end))
+            Some(m) => m.clone().write().map_or_else(
+                |e| Err(MyError::UnknownErr(e.to_string()).into()),
+                |v| Ok(v.find_path(start, end)))
         }
     }
 }
