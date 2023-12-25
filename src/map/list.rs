@@ -39,8 +39,11 @@ impl OpenList {
         false
     }
 
-    pub fn to_array(&self) -> Vec<PointType> {
-        self.points.clone().into_values().collect()
+    pub fn to_array(&self) -> Vec<Point> {
+        let x: Vec<PointType> = self.points.clone().into_values().collect();
+        x.iter().map(|v| {
+            v.take()
+        }).collect()
     }
 }
 

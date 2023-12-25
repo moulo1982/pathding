@@ -8,7 +8,7 @@ use crate::errors::my_errors::{MyError, RetResult};
 use crate::id::id_generator::ID_GENERATOR;
 use crate::id::instance_id::InstanceIdType;
 
-use crate::map::{Map, Point, PointType};
+use crate::map::{Map, Point};
 use crate::map::map::MapType;
 
 
@@ -59,7 +59,7 @@ impl MapManager {
                 |mut v| v.load(points))
         }
     }
-    pub fn find_path(&self, map_id: InstanceIdType, start: &Point, end: &Point) -> RetResult<Vec<PointType>> {
+    pub fn find_path(&self, map_id: InstanceIdType, start: &Point, end: &Point) -> RetResult<Vec<Point>> {
         let res = self.map_collections.get(&map_id);
         match res {
             None => Err(MyError::MapNotExist(map_id).into()),

@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::sync::{Arc, RwLock};
 use crate::errors::my_errors::RetResult;
-use crate::map::{Map, OpenList, Point, PointType};
+use crate::map::{Map, OpenList, Point};
 
 pub struct  AStar {
     pub map: Box<Vec<Vec<i32>>>,
@@ -15,7 +15,7 @@ impl Map for AStar {
         self.map = Box::new(points);
         Ok(())
     }
-    fn find_path(&self, start: &Point, end: &Point) -> Vec<PointType> {
+    fn find_path(&self, start: &Point, end: &Point) -> Vec<Point> {
 
         let open_list = RefCell::new(OpenList::new());
         let close_list = RefCell::new(OpenList::new());
@@ -25,27 +25,26 @@ impl Map for AStar {
         while open_list.borrow().len() > 0 && !open_list.borrow().contains_point(end){
 
             let min_f = open_list.borrow_mut().min_f();
-            if min_f.is_none() {
-                break
-            }
+            match min_f {
+                None => break,
+                Some(v) => {
+                    let neighbors = v.borrow().neighbors();
+                    for mut one in neighbors {
 
-            let min_f = min_f.unwrap();
+                        if !self.in_map(&one) || open_list.borrow().contains_point(&one) || open_list.borrow().contains_point(&one) {
+                            continue
+                        }
 
-            let neighbors = min_f.borrow().neighbors();
-            for mut one in neighbors {
+                        one.set_parent(v.clone());
+                        open_list.borrow_mut().insert(&start, &end, one);//one直接移动到函数内，插入到列表中，后面不用了
+                    }
 
-                if !self.in_map(&one) || open_list.borrow().contains_point(&one) || open_list.borrow().contains_point(&one) {
-                    continue
+                    close_list.borrow_mut().insert(&start, &end, v.take());//min_f直接移动到函数内，插入到列表中，后面不用了
+
+                    //没写完，直接跳出，避免死循环
+                    break
                 }
-
-                one.set_parent(min_f.clone());
-                open_list.borrow_mut().insert(&start, &end, one);//one直接移动到函数内，插入到列表中，后面不用了
             }
-
-            close_list.borrow_mut().insert(&start, &end, min_f.take());//min_f直接移动到函数内，插入到列表中，后面不用了
-
-            //没写完，直接跳出，避免死循环
-            break
         }
 
         let x = open_list.borrow().to_array(); x
