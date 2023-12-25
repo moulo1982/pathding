@@ -4,15 +4,15 @@ use crate::errors::my_errors::RetResult;
 use crate::map::{Map, OpenList, Point, PointType};
 
 pub struct  AStar {
-    pub map: Arc<RwLock<Vec<Vec<i32>>>>,
+    pub map: Box<Vec<Vec<i32>>>,
 }
 
 impl Map for AStar {
     fn new() -> Arc<RwLock<dyn Map>> {
-        Arc::new(RwLock::new(AStar { map: Arc::new(RwLock::new(vec![])) }))
+        Arc::new(RwLock::new(AStar { map: Box::new(vec![]) }))
     }
     fn load(&mut self, points: Vec<Vec<i32>>) -> RetResult<()> {
-        self.map = Arc::new(RwLock::new(points));
+        self.map = Box::new(points);
         Ok(())
     }
     fn find_path(&self, start: &Point, end: &Point) -> Vec<PointType> {
@@ -54,14 +54,14 @@ impl Map for AStar {
     fn in_map(&self, point:&Point) -> bool {
         let borrow = point;//.borrow();
         if borrow.x < 0 || borrow.y < 0 {return false}
-        if borrow.x > self.map.read().unwrap().len() as i64 || borrow.x > self.map.read().unwrap()[0].len()  as i64 {return false}
-        if self.map.read().unwrap()[borrow.x as usize][borrow.y as usize] == 1 {return false}
+        if borrow.x > self.map.len() as i64 || borrow.x > self.map[0].len()  as i64 {return false}
+        if self.map[borrow.x as usize][borrow.y as usize] == 1 {return false}
         true
     }
 }
 
 impl Drop for AStar {
     fn drop(&mut self) {
-        self.map.write().unwrap().clear()
+        self.map.clear()
     }
 }
