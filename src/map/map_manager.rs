@@ -63,7 +63,7 @@ impl MapManager {
         let res = self.map_collections.get(&map_id);
         match res {
             None => Err(MyError::MapNotExist(map_id).into()),
-            Some(m) => m.clone().write().map_or_else(
+            Some(m) => m.clone().read().map_or_else(
                 |e| Err(MyError::UnknownErr(e.to_string()).into()),
                 |v| Ok(v.find_path(start, end)))
         }
