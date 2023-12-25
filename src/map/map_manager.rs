@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::sync::Arc;
+//use async_once::AsyncOnce;
 use tokio::sync::RwLock;
 use lazy_static::lazy_static;
 use crate::astar::AStar;
@@ -13,6 +14,16 @@ use crate::map::map::MapType;
 
 lazy_static! {
     pub static ref MAP_MANAGER: Arc<RwLock<MapManager>> = MapManager::new();
+
+    //异步方式的生成单例，因为有些生成单例的代码，是await的，所以整体就需要await。 比如mongodb的client
+    /*
+    pub static ref MONGODB_CLIENT: AsyncOnce<mongodb::Database> = AsyncOnce::new( async {
+        let config = &GLOBAL_CONFIG;
+        let client_options = ClientOptions::parse(&config.mongodb.url).await.unwrap();
+        let client = Client::with_options(client_options).unwrap();
+        client.database(&config.mongodb.db)
+    });
+    */
 }
 
 pub struct MapManager {
