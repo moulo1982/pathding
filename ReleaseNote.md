@@ -6,4 +6,15 @@
 
 `0.0.3` 发现trait的结构不正确，应该为：Map是一个trait，AStart或者Recast来实现它。
 
-`0.0.4` PartialEq 这个trait原来也可以用来比较两个不同类型之间的比较，但是A == B 和 B == A需要实现两便
+`0.0.4` PartialEq 这个trait原来也可以用来比较两个不同类型之间的比较，但是A == B 和 B == A需要实现两遍
+
+`0.0.5` 2023.12月25日：尝试tokio以 多线程+携程+await 的模式来运行，MapManager是一个单例，new_astar需要写锁，但是find_path只需要读锁。
+当中试图用到了Rust 1.75的新特性，也就是：trait中可以有async方法，这个是个很重要的修改。 
+
+Rust 1.75 两个重大的修改就是：
+1：trait支持async方法
+2：返回类型支持 impl Trait
+
+Rust团队承诺这一周发布1.75
+
+写下这一段话后才反应过来，寻路是CPU依赖型，要个屁的await。去掉了。
