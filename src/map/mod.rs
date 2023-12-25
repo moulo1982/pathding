@@ -6,8 +6,7 @@ mod map;
 pub use map::Map;
 
 mod map_manager;
-pub use map_manager::MAP_MANAGER;
+pub use map_manager::MapManager;
 
 mod list;
-
 pub use list::OpenList;

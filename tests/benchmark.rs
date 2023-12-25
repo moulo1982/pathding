@@ -1,6 +1,6 @@
-use std::sync::Arc;
+use std::cell::RefCell;
 use chrono::Utc;
-use game_pathfinding::map::MAP_MANAGER;
+use game_pathfinding::map::MapManager;
 use game_pathfinding::{map, vec2d};
 
 #[tokio::test]
@@ -16,7 +16,7 @@ async fn many_test() {
         0, 0, 0, 1, 0, 1, 0, 1;
     ];
 
-    let map = Arc::clone(&MAP_MANAGER);
+    let map = MapManager::get_instance();
     let mm = map.write().await.new_astar().await;
     if let Err(err) = map.write().await.load(mm, map_info) {
         println!("{}", err);
@@ -41,4 +41,36 @@ async fn many_test() {
 
     let end = (Utc::now().timestamp_micros() - begin) as f64 / 1000.0f64;
     println!("Total: {} times, Use: {}ms", len, end);
+}
+
+#[tokio::test]
+async fn other_test() {
+    let data = RefCell::new(0);
+
+    let begin = Utc::now().timestamp_micros();
+
+    let times = 1_000_000;
+    for _ in 0..times {
+        let mut borrow = data.borrow_mut();
+        *borrow += 1;
+    }
+
+    println!("Final value: {}", *data.borrow());
+    let end = (Utc::now().timestamp_micros() - begin) as f64 / 1000.0f64;
+    println!("Total: {} times, Use: {}ms", times, end);
+}
+
+#[tokio::test]
+async fn o_test() {
+    let mut _i = 0;
+
+    let begin = Utc::now().timestamp_micros();
+
+    let times = 1_000_000;
+    for _ in 0..times {
+        _i += 1;
+    }
+
+    let end = (Utc::now().timestamp_micros() - begin) as f64 / 1000.0f64;
+    println!("Total: {} times, Use: {}ms", times, end);
 }

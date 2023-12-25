@@ -11,37 +11,17 @@ use crate::id::instance_id::InstanceIdType;
 use crate::map::{Map, Point};
 use crate::map::map::MapType;
 
-
-lazy_static! {
-    pub static ref MAP_MANAGER: Arc<RwLock<MapManager>> = MapManager::new();
-
-    //异步方式的生成单例，因为有些生成单例的代码，是await的，所以整体就需要await。 比如mongodb的client
-    /*
-    pub static ref MONGODB_CLIENT: AsyncOnce<mongodb::Database> = AsyncOnce::new( async {
-        let config = &GLOBAL_CONFIG;
-        let client_options = ClientOptions::parse(&config.mongodb.url).await.unwrap();
-        let client = Client::with_options(client_options).unwrap();
-        client.database(&config.mongodb.db)
-    });
-    */
-}
-
 pub struct MapManager {
     map_collections : HashMap<u128, MapType>,
 }
 
-impl Clone for MapManager {
-    fn clone(&self) -> Self {
-        MapManager{map_collections: self.map_collections.clone()}
-    }
-
-    fn clone_from(&mut self, source: &Self) {
-        self.map_collections = source.map_collections.clone()
-    }
-}
-
 impl MapManager {
-    pub fn new() -> Arc<RwLock<MapManager>> {
+
+    pub fn get_instance() -> Arc<RwLock<MapManager>> {
+        Arc::clone(&MAP_MANAGER)
+    }
+
+    fn new() -> Arc<RwLock<MapManager>> {
         Arc::new(RwLock::new(MapManager{map_collections: HashMap::new()}))
     }
     pub async fn new_astar(&mut self) -> InstanceIdType {
@@ -68,4 +48,18 @@ impl MapManager {
                 |v| Ok(v.find_path(start, end)))
         }
     }
+}
+
+lazy_static! {
+    static ref MAP_MANAGER: Arc<RwLock<MapManager>> = MapManager::new();
+
+    //异步方式的生成单例，因为有些生成单例的代码，是await的，所以整体就需要await。 比如mongodb的client
+    /*
+    pub static ref MONGODB_CLIENT: AsyncOnce<mongodb::Database> = AsyncOnce::new( async {
+        let config = &GLOBAL_CONFIG;
+        let client_options = ClientOptions::parse(&config.mongodb.url).await.unwrap();
+        let client = Client::with_options(client_options).unwrap();
+        client.database(&config.mongodb.db)
+    });
+    */
 }
