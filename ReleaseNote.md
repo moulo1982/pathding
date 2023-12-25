@@ -19,3 +19,6 @@ Rust团队承诺2023.12.28发布1.75 [Rust 1.75.0](https://releases.rs/docs/1.75
 
 因为tokio的mutex.lock是await的，所以有些方法的签名必须是async，
 等1.75发布就修改trait Map的find_path位async
+
+
+`0.0.6` 优化立刻一些不必要的锁，和一些返回类型
