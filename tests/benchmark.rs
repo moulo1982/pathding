@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use chrono::Utc;
 use game_pathfinding::map::MAP_MANAGER;
 use game_pathfinding::{map, vec2d};
 
@@ -22,18 +23,22 @@ async fn many_test() {
         return;
     }
 
-    let threads: Vec<_> = (0..1_000_000)
-        .map(|_i| {
+    let begin = Utc::now().timestamp_micros();
+
+    let threads: Vec<_> = (0..1_000)
+        .map(|_| {
             let map = map.clone();
             tokio::spawn(async move {
-                let _result = map.read().await.find_path(mm, &map::Point::new(1, 0), &map::Point::new(6, 7));
-                //println!("{}, {:?}", i, result);
+                map.read().await.find_path(mm, &map::Point::new(1, 0), &map::Point::new(6, 7)).expect("TODO: panic message");
             })
         })
         .collect();
 
-    println!("Total: {}", threads.len());
+    let len = threads.len();
     for thread in threads {
         thread.await.unwrap()
     }
+
+    let end = (Utc::now().timestamp_micros() - begin) as f64 / 1000.0f64;
+    println!("Total: {} times, Use: {}ms", len, end);
 }
