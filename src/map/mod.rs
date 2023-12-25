@@ -9,4 +9,5 @@ mod map_manager;
 pub use map_manager::MAP_MANAGER;
 
 mod list;
+
 pub use list::OpenList;

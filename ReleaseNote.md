@@ -15,6 +15,7 @@ Rust 1.75 两个重大的修改就是：
 1：trait支持async方法
 2：返回类型支持 impl Trait
 
-Rust团队承诺这一周发布1.75
+Rust团队承诺2023.12.28发布1.75 [Rust 1.75.0](https://releases.rs/docs/1.75.0/)
 
-写下这一段话后才反应过来，寻路是CPU依赖型，要个屁的await。去掉了。
+因为tokio的mutex.lock是await的，所以有些方法的签名必须是async，
+等1.75发布就修改trait Map的find_path位async

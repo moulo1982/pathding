@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use game_pathfinding::{map, vec2d};
 use game_pathfinding::map::MAP_MANAGER;
 
@@ -14,9 +15,9 @@ async fn main() {
         0, 0, 0, 1, 0, 1, 0, 1;
     ];
 
-    let map = MAP_MANAGER.get().await;
-    let mm = map.write().unwrap().new_astar();
-    if let Err(err) = map.write().unwrap().load(mm, map_info) {
+    let map = Arc::clone(&MAP_MANAGER);
+    let mm = map.write().await.new_astar().await;
+    if let Err(err) = map.write().await.load(mm, map_info) {
         println!("{}", err);
         return;
     }
@@ -25,7 +26,7 @@ async fn main() {
         .map(|i| {
             let map = map.clone();
             tokio::spawn(async move {
-                let result = map.read().unwrap().find_path(mm, &map::Point::new(1, 0), &map::Point::new(6, 7));
+                let result = map.read().await.find_path(mm, &map::Point::new(1, 0), &map::Point::new(6, 7));
                 println!("{}, {:?}", i, result);
             })
         })
