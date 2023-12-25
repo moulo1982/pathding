@@ -1,5 +1,4 @@
-use std::sync::Arc;
-use tokio::sync::RwLock;
+use std::sync::{Arc, RwLock};
 use chrono::{Datelike, TimeZone, Utc};
 use lazy_static::lazy_static;
 
