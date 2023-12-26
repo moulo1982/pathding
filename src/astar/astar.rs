@@ -1,5 +1,7 @@
 use std::cell::RefCell;
 use std::sync::{Arc, RwLock};
+//use tokio::fs::File;
+//use tokio::io::AsyncReadExt;
 use crate::errors::my_errors::RetResult;
 use crate::map::{Map, OpenList, Point};
 
@@ -11,10 +13,31 @@ impl Map for AStar {
     fn new() -> Arc<RwLock<dyn Map>> {
         Arc::new(RwLock::new(AStar { map: Box::new(vec![]) }))
     }
+
     fn load(&mut self, points: Vec<Vec<i32>>) -> RetResult<()> {
         self.map = Box::new(points);
         Ok(())
     }
+
+    /*async fn load_from_file(&mut self, points: String) -> RetResult<()> {
+
+        // 打开文件
+        let file = File::open("path/to/your/map_file.txt").await?;
+
+        // 创建一个缓冲区来存储文件内容
+        let mut buffer = Vec::new();
+
+        // 通过异步读取文件内容到缓冲区
+        file.take(1024) // 读取文件的前 1024 字节，可以根据需要调整
+            .read_to_end(&mut buffer)
+            .await?;
+
+        // 打印文件内容
+        println!("{}", String::from_utf8_lossy(&buffer));
+
+        Ok(())
+    }*/
+
     fn find_path(&self, start: &Point, end: &Point) -> Vec<Point> {
 
         let open_list = RefCell::new(OpenList::new());

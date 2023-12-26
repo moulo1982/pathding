@@ -1,8 +1,6 @@
-use std::cell::RefCell;
 use chrono::Utc;
 use game_pathfinding::map::MapManager;
 use game_pathfinding::{map, vec2d};
-use game_pathfinding::id::instance_id::InstanceIdType;
 
 #[tokio::test]
 async fn many_test() {
@@ -18,14 +16,9 @@ async fn many_test() {
     ];
 
     let map = MapManager::get_instance();
-    let mm = map.write().await.new_astar();
-    let mut _map_id: InstanceIdType = 0;
-    match mm {
-        Ok(v) => _map_id = v,
-        Err(err) => {panic!("{}", err);}
-    }
+    let map_id = map.write().await.new_astar().await;
 
-    if let Err(err) = map.write().await.load(_map_id, map_info) {
+    if let Err(err) = map.write().await.load(map_id, map_info) {
         println!("{}", err);
         return;
     }
@@ -36,7 +29,7 @@ async fn many_test() {
         .map(|_| {
             let map = map.clone();
             tokio::spawn(async move {
-                map.read().await.find_path(_map_id, &map::Point::new(1, 0), &map::Point::new(6, 7)).expect("TODO: panic message");
+                map.read().await.find_path(map_id, &map::Point::new(1, 0), &map::Point::new(6, 7)).expect("TODO: panic message");
             })
         })
         .collect();
@@ -49,7 +42,7 @@ async fn many_test() {
     let end = (Utc::now().timestamp_micros() - begin) as f64 / 1000.0f64;
     println!("Total: {} times, Use: {}ms", len, end);
 }
-
+/*
 #[tokio::test]
 async fn other_test() {
     let data = RefCell::new(0);
@@ -80,4 +73,4 @@ async fn o_test() {
 
     let end = (Utc::now().timestamp_micros() - begin) as f64 / 1000.0f64;
     println!("Total: {} times, Use: {}ms", times, end);
-}
+}*/
