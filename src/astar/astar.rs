@@ -1,4 +1,3 @@
-use std::cell::RefCell;
 use std::sync::{Arc, RwLock};
 //use tokio::fs::File;
 //use tokio::io::AsyncReadExt;
@@ -43,16 +42,16 @@ impl Map for AStar {
         //let start = start.into_rc();
         //let end = end.into_rc();
 
-        let open_list = RefCell::new(OpenList::new());
+        let mut open_list = OpenList::new();
         let mut close_list = OpenList::new();
 
         let mut last = end.clone();
 
-        open_list.borrow_mut().insert(start.clone());
+        open_list.insert(start.clone());
 
-        while open_list.borrow().len() > 0 {
+        while open_list.len() > 0 {
 
-            let min_f = open_list.borrow_mut().min_f();
+            let min_f = open_list.min_f();
 
 
             match min_f {
@@ -65,9 +64,9 @@ impl Map for AStar {
                         if self.in_map(neighbor.clone())
                             && !close_list.contains_point(neighbor.clone()){
 
-                            if !open_list.borrow().contains_point(neighbor.clone()) {
+                            if !open_list.contains_point(neighbor.clone()) {
                                 neighbor.borrow_mut().set_parent(v.clone());
-                                open_list.borrow_mut().insert(neighbor.clone());
+                                open_list.insert(neighbor.clone());
                                 if neighbor == end {
                                     last = neighbor;
                                     break
@@ -84,13 +83,13 @@ impl Map for AStar {
                         }
                     }
 
-                    open_list.borrow_mut().remove(v.clone());
+                    open_list.remove(v.clone());
                     close_list.insert(v.clone());
 
                 }
             }
 
-            if open_list.borrow().contains_point(end.clone()){
+            if open_list.contains_point(end.clone()){
                 break
             }
         }
