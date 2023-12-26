@@ -80,7 +80,7 @@ impl Point {
         (x1 - x).abs() + (y - y1).abs()
     }
 
-    pub fn distance(&self, other: Rc<RefCell<Point>>) -> i64 {
+    pub fn distance(&self, other: &PointType) -> i64 {
         let b = other.borrow();
         Point::dis(self.x, self.y, b.x, b.y)
     }

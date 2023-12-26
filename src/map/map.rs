@@ -13,5 +13,5 @@ pub trait Map : Send + Sync {
 
     fn find_path(&self, start: PointType, end: PointType) -> Vec<Point>;
 
-    fn in_map(&self, point: PointType) -> bool;
+    fn in_map(&self, point: &PointType) -> bool;
 }

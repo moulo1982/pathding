@@ -14,9 +14,13 @@ impl OpenList {
         self.hash_points.push(value)
     }
 
-    pub fn remove(&mut self, value: PointType) {
+    pub fn move_insert(&mut self, value: PointType) {
+        self.hash_points.push(value)
+    }
+
+    pub fn remove(&mut self, value: &PointType) {
         for i in 0..self.hash_points.len() {
-            if self.hash_points[i] == value {
+            if self.hash_points[i] == *value {
                 self.hash_points.remove(i);
                 break
             }
@@ -39,9 +43,9 @@ impl OpenList {
         None
     }
 
-    pub fn contains_point(&self, point: PointType) -> bool{
+    pub fn contains_point(&self, point: &PointType) -> bool{
         for i in 0..self.hash_points.len() {
-            if self.hash_points[i] == point {
+            if self.hash_points[i] == *point {
                 return true;
             }
         }

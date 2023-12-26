@@ -39,9 +39,6 @@ impl Map for AStar {
 
     fn find_path(&self, start: PointType, end: PointType) -> Vec<Point> {
 
-        //let start = start.into_rc();
-        //let end = end.into_rc();
-
         let mut open_list = OpenList::new();
         let mut close_list = OpenList::new();
 
@@ -52,8 +49,7 @@ impl Map for AStar {
         while open_list.len() > 0 {
 
             let min_f = open_list.min_f();
-
-
+            
             match min_f {
                 None => break,
                 Some(v) => {
@@ -61,10 +57,10 @@ impl Map for AStar {
                     let neighbors = v.borrow().neighbors(&start, &end);
 
                     for neighbor in neighbors.into_iter() {
-                        if self.in_map(neighbor.clone())
-                            && !close_list.contains_point(neighbor.clone()){
+                        if self.in_map(&neighbor)
+                            && !close_list.contains_point(&neighbor){
 
-                            if !open_list.contains_point(neighbor.clone()) {
+                            if !open_list.contains_point(&neighbor) {
                                 neighbor.borrow_mut().set_parent(v.clone());
                                 open_list.insert(neighbor.clone());
                                 if neighbor == end {
@@ -72,7 +68,7 @@ impl Map for AStar {
                                     break
                                 }
                             } else {
-                                let new_g = v.borrow().g + v.borrow().distance(neighbor.clone());
+                                let new_g = v.borrow().g + v.borrow().distance(&neighbor);
                                 if new_g <= neighbor.borrow().g {
                                     let mut nmb = neighbor.borrow_mut();
                                     nmb.set_parent(v.clone());
@@ -83,19 +79,20 @@ impl Map for AStar {
                         }
                     }
 
-                    open_list.remove(v.clone());
-                    close_list.insert(v.clone());
+                    open_list.remove(&v);
+                    close_list.move_insert(v);
 
                 }
             }
 
-            if open_list.contains_point(end.clone()){
+            if open_list.contains_point(&end){
                 break
             }
         }
 
-        let mut list = vec![last.borrow().clone()];
-        let mut p = last.borrow().clone().parent;
+        let mut lb = last.borrow_mut();
+        let mut list = vec![lb.clone()];
+        let mut p = lb.parent.take();
         while p != None {
             match p {
                 None => break,
@@ -109,7 +106,7 @@ impl Map for AStar {
         list
     }
 
-    fn in_map(&self, point: PointType) -> bool {
+    fn in_map(&self, point: &PointType) -> bool {
         let point = point.borrow();
         if point.x < 0 || point.y < 0 {return false}
         if point.x >= self.map.len() as i64 || point.y >= self.map[0].len()  as i64 {return false}
