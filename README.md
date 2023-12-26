@@ -1,5 +1,7 @@
 # path_finding
 
+[![Crates.io](https://img.shields.io/crates/v/game_pathfinding.svg)](https://crates.io/crates/game_pathfinding) [![docs.rs](https://docs.rs/game_pathfinding/badge.svg)](https://docs.rs/game_pathfinding) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 `path_finding` 是一个我自己的练习项目，从A*开始写起，后续慢慢添加如`recastnavigation`，
 最终做成一个lib或者可以单独运行的微服务。
 
