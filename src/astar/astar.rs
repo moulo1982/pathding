@@ -44,7 +44,7 @@ impl Map for AStar {
         //let end = end.into_rc();
 
         let open_list = RefCell::new(OpenList::new());
-        let close_list = RefCell::new(OpenList::new());
+        let mut close_list = OpenList::new();
 
         let mut last = end.clone();
 
@@ -63,7 +63,7 @@ impl Map for AStar {
 
                     for neighbor in neighbors.into_iter() {
                         if self.in_map(neighbor.clone())
-                            && !close_list.borrow().contains_point(neighbor.clone()){
+                            && !close_list.contains_point(neighbor.clone()){
 
                             if !open_list.borrow().contains_point(neighbor.clone()) {
                                 neighbor.borrow_mut().set_parent(v.clone());
@@ -85,7 +85,7 @@ impl Map for AStar {
                     }
 
                     open_list.borrow_mut().remove(v.clone());
-                    close_list.borrow_mut().insert(v.clone());
+                    close_list.insert(v.clone());
 
                 }
             }
