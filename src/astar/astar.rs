@@ -97,7 +97,7 @@ impl Map for AStar {
             match p {
                 None => break,
                 Some(v) => {
-                    list.insert(0, v.borrow().clone());
+                    list.push(v.borrow().clone());
                     p = v.borrow_mut().parent.take()
                 }
             }

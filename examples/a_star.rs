@@ -38,7 +38,7 @@ async fn main() {
         match result {
             Ok(ref v) => {
                 println!("寻路结果: ");
-                for x in v.into_iter() {
+                for x in v.into_iter().rev() {
                     println!("{}, {}", x.x, x.y);
                 }
             },
