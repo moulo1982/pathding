@@ -10,3 +10,4 @@ pub use map_manager::MapManager;
 
 mod list;
 pub use list::OpenList;
+pub use list::CloseList;

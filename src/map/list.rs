@@ -1,52 +1,55 @@
-use std::collections::{BTreeMap};
-use crate::map::{Point, PointType};
+use crate::map::{PointType};
 
 #[derive(Clone)]
 pub struct OpenList {
-    points: BTreeMap<i64, PointType>,
+    hash_points: Vec<PointType>,
 }
 
 impl OpenList {
     pub fn new() -> Self {
-        OpenList{points: BTreeMap::new()}
+        OpenList{hash_points:Vec::new()}
     }
 
-    pub fn insert_by_key(&mut self, key: i64, value: Point) -> Option<PointType> {
-        self.points.insert(key, value.into_rc())
+    pub fn insert(&mut self, value: PointType) {
+        self.hash_points.push(value)
     }
 
-    pub fn insert(&mut self, start: &Point, end: &Point, value: Point) -> Option<PointType> {
-        let f = value.f(start, end);
-        self.insert_by_key(f, value)
+    pub fn remove(&mut self, value: PointType) {
+        for i in 0..self.hash_points.len() {
+            if self.hash_points[i] == value {
+                self.hash_points.remove(i);
+                break
+            }
+        }
     }
 
     pub fn len(&self) -> usize {
-        self.points.len()
+        self.hash_points.len()
     }
 
     pub fn min_f(&mut self) -> Option<PointType> {
-        self.points.pop_first().map(|value| value.1 )
+
+        if self.hash_points.len() > 0 {
+            self.hash_points.sort_by(|a, b| a.borrow().f().cmp(&b.borrow().f()) );
+            let ret = self.hash_points[0].clone();
+            self.hash_points.remove(0);
+            return Some(ret);
+        }
+
+        None
     }
 
-    pub fn contains_point(&self, point: &Point) -> bool{
-
-        for (_, value) in self.points.iter() {
-            if point == value {
+    pub fn contains_point(&self, point: PointType) -> bool{
+        for i in 0..self.hash_points.len() {
+            if self.hash_points[i] == point {
                 return true;
             }
         }
-
-        false
-    }
-
-    pub fn to_array(&self) -> Vec<Point> {
-        let x: Vec<PointType> = self.points.clone().into_values().collect();
-        x.iter().map(|v| {
-            v.take()
-        }).collect()
+        return false;
     }
 }
 
-/*struct CloseList {
 
-}*/
+pub struct CloseList {
+
+}

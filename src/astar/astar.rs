@@ -3,7 +3,7 @@ use std::sync::{Arc, RwLock};
 //use tokio::fs::File;
 //use tokio::io::AsyncReadExt;
 use crate::errors::my_errors::RetResult;
-use crate::map::{Map, OpenList, Point};
+use crate::map::{Map, OpenList, Point, PointType};
 
 pub struct  AStar {
     pub map: Box<Vec<Vec<i32>>>,
@@ -38,46 +38,82 @@ impl Map for AStar {
         Ok(())
     }*/
 
-    fn find_path(&self, start: &Point, end: &Point) -> Vec<Point> {
+    fn find_path(&self, start: PointType, end: PointType) -> Vec<Point> {
+
+        //let start = start.into_rc();
+        //let end = end.into_rc();
 
         let open_list = RefCell::new(OpenList::new());
         let close_list = RefCell::new(OpenList::new());
 
-        open_list.borrow_mut().insert(&start, &end, start.clone());
+        let mut last = end.clone();
 
-        while open_list.borrow().len() > 0 && !open_list.borrow().contains_point(end){
+        open_list.borrow_mut().insert(start.clone());
+
+        while open_list.borrow().len() > 0 {
 
             let min_f = open_list.borrow_mut().min_f();
+
+
             match min_f {
                 None => break,
                 Some(v) => {
-                    let neighbors = v.borrow().neighbors();
-                    for mut one in neighbors {
 
-                        if !self.in_map(&one) || open_list.borrow().contains_point(&one) || open_list.borrow().contains_point(&one) {
-                            continue
+                    let neighbors = v.borrow().neighbors(&start, &end);
+
+                    for neighbor in neighbors.into_iter() {
+                        if self.in_map(neighbor.clone())
+                            && !close_list.borrow().contains_point(neighbor.clone()){
+
+                            if !open_list.borrow().contains_point(neighbor.clone()) {
+                                neighbor.borrow_mut().set_parent(v.clone());
+                                open_list.borrow_mut().insert(neighbor.clone());
+                                if neighbor == end {
+                                    last = neighbor;
+                                    break
+                                }
+                            } else {
+                                let new_g = v.borrow().g + v.borrow().distance(neighbor.clone());
+                                if new_g <= neighbor.borrow().g {
+                                    neighbor.borrow_mut().set_parent(v.clone());
+                                    neighbor.borrow_mut().g = new_g;
+                                }
+                                last = neighbor;
+                            }
                         }
-
-                        one.set_parent(v.clone());
-                        open_list.borrow_mut().insert(&start, &end, one);//one直接移动到函数内，插入到列表中，后面不用了
                     }
 
-                    close_list.borrow_mut().insert(&start, &end, v.take());//min_f直接移动到函数内，插入到列表中，后面不用了
+                    open_list.borrow_mut().remove(v.clone());
+                    close_list.borrow_mut().insert(v.clone());
 
-                    //没写完，直接跳出，避免死循环
-                    break
+                }
+            }
+
+            if open_list.borrow().contains_point(end.clone()){
+                break
+            }
+        }
+
+        let mut list = vec![last.borrow().clone()];
+        let mut p = last.borrow().clone().parent;
+        while p != None {
+            match p {
+                None => break,
+                Some(v) => {
+                    list.insert(0, v.borrow().clone());
+                    p = v.borrow_mut().parent.take()
                 }
             }
         }
 
-        let x = open_list.borrow().to_array(); x
+        list
     }
 
-    fn in_map(&self, point:&Point) -> bool {
-        let borrow = point;//.borrow();
-        if borrow.x < 0 || borrow.y < 0 {return false}
-        if borrow.x > self.map.len() as i64 || borrow.x > self.map[0].len()  as i64 {return false}
-        if self.map[borrow.x as usize][borrow.y as usize] == 1 {return false}
+    fn in_map(&self, point: PointType) -> bool {
+        let point = point.borrow();
+        if point.x < 0 || point.y < 0 {return false}
+        if point.x >= self.map.len() as i64 || point.y >= self.map[0].len()  as i64 {return false}
+        if self.map[point.y as usize][point.x as usize] == 1 {return false}
         true
     }
 }

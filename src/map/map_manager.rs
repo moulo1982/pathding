@@ -7,7 +7,7 @@ use crate::errors::my_errors::{MyError, RetResult};
 use crate::id::id_generator::IdGenerator;
 use crate::id::instance_id::InstanceIdType;
 
-use crate::map::{Map, Point};
+use crate::map::{Map, Point, PointType};
 use crate::map::map::MapType;
 
 pub struct MapManager {
@@ -29,10 +29,10 @@ impl MapManager {
         map_id
     }
 
-    pub fn load(&self, map_id: InstanceIdType, points: Vec<Vec<i32>>) -> RetResult<()> {
-        let res = self.map_collections.get(&map_id);
+    pub fn load(&self, map_id: &InstanceIdType, points: Vec<Vec<i32>>) -> RetResult<()> {
+        let res = self.map_collections.get(map_id);
         match res {
-            None => Err(MyError::MapNotExist(map_id).into()),
+            None => Err(MyError::MapNotExist(map_id.clone()).into()),
             Some(m) => m.clone().write().map_or_else(
                 |e| Err(MyError::UnknownErr(e.to_string()).into()),
                 |mut v| v.load(points))
@@ -49,10 +49,10 @@ impl MapManager {
         }
     }*/
 
-    pub fn find_path(&self, map_id: InstanceIdType, start: &Point, end: &Point) -> RetResult<Vec<Point>> {
-        let res = self.map_collections.get(&map_id);
+    pub fn find_path(&self, map_id: &InstanceIdType, start: PointType, end: PointType) -> RetResult<Vec<Point>> {
+        let res = self.map_collections.get(map_id);
         match res {
-            None => Err(MyError::MapNotExist(map_id).into()),
+            None => Err(MyError::MapNotExist(map_id.clone()).into()),
             Some(m) => m.clone().read().map_or_else(
                 |e| Err(MyError::UnknownErr(e.to_string()).into()),
                 |v| Ok(v.find_path(start, end)))

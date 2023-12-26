@@ -1,5 +1,5 @@
 use crate::errors::my_errors::RetResult;
-use crate::map::Point;
+use crate::map::{Point, PointType};
 
 pub type MapType = std::sync::Arc<std::sync::RwLock<dyn Map>>;
 
@@ -11,7 +11,7 @@ pub trait Map : Send + Sync {
 
     //async fn load_from_file(&mut self, points: String) -> RetResult<()>;
 
-    fn find_path(&self, start: &Point, end: &Point) -> Vec<Point>;
+    fn find_path(&self, start: PointType, end: PointType) -> Vec<Point>;
 
-    fn in_map(&self, point:&Point) -> bool;
+    fn in_map(&self, point: PointType) -> bool;
 }

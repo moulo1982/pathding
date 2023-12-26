@@ -8,7 +8,10 @@ pub struct Point {
     pub x: i64,
     pub y: i64,
 
-    pub parent: Option<PointType>,
+    pub g: i64,
+    pub h: i64,
+
+    pub parent: Option<PointType>
 }
 
 impl PartialEq for Point {
@@ -26,52 +29,63 @@ impl Eq for Point {
 
 impl Point {
 
-    pub fn new(x: i64, y:i64) -> Self {
-        Point{x, y, parent:None}
+    pub fn new(x: i64, y:i64, g:i64, h:i64) -> PointType {
+        Rc::new(RefCell::new(Point{x, y, g, h, parent:None}))
     }
 
-    pub fn with_more_details(x: i64, y:i64, parent: Option<PointType>) -> Self {
-        Point{x, y, parent}
+    pub fn f(&self) -> i64 {
+        self.g + self.h
     }
 
-    pub fn into_rc(self) -> PointType {
-        Rc::new(RefCell::new(self))
-    }
-
-    pub fn f(&self, start: &Point, end: &Point) -> i64 {
-        self.g(start) + self.h(end)
-    }
-
-    pub fn g(&self, start: &Point) -> i64 {
-        (self.x - start.x).abs() + (self.y - start.y).abs()
-    }
-
-    pub fn h(&self, end: &Point) -> i64 {
-        (end.x - self.x).abs() + (end.y - self.y).abs()
-    }
-
-    pub fn neighbors(&self) -> Vec<Point> {
+    pub fn neighbors(&self, start: &PointType, end: &PointType) -> Vec<PointType> {
+        let sb = start.borrow();
+        let eb = end.borrow();
         vec![
-            Point::with_more_details(self.x - 1, self.y, None),
-            Point::with_more_details(self.x + 1, self.y, None),
-            Point::with_more_details(self.x, self.y - 1, None),
-            Point::with_more_details(self.x, self.y + 1, None),
+            Point::new(self.x - 1, self.y,
+                       Point::dis(self.x - 1, self.y, sb.x, sb.y),
+                       Point::dis(self.x - 1, self.y, eb.x, eb.y),
+            ),
+            Point::new(self.x - 1, self.y - 1,
+                       Point::dis(self.x - 1, self.y - 1, sb.x, sb.y),
+                       Point::dis(self.x - 1, self.y - 1, eb.x, eb.y),
+            ),
+            Point::new(self.x, self.y - 1,
+                       Point::dis(self.x, self.y - 1, sb.x, sb.y),
+                       Point::dis(self.x, self.y - 1, eb.x, eb.y),
+            ),
+            Point::new(self.x + 1, self.y - 1,
+                       Point::dis(self.x + 1, self.y - 1, sb.x, sb.y),
+                       Point::dis(self.x + 1, self.y - 1, eb.x, eb.y),
+            ),
+            Point::new(self.x + 1, self.y,
+                       Point::dis(self.x + 1, self.y, sb.x, sb.y),
+                       Point::dis(self.x + 1, self.y, eb.x, eb.y),
+            ),
+            Point::new(self.x + 1, self.y + 1,
+                       Point::dis(self.x - 1, self.y + 1, sb.x, sb.y),
+                       Point::dis(self.x - 1, self.y + 1, eb.x, eb.y),
+            ),
+            Point::new(self.x, self.y + 1,
+                       Point::dis(self.x, self.y + 1, sb.x, sb.y),
+                       Point::dis(self.x, self.y + 1, eb.x, eb.y),
+            ),
+            Point::new(self.x - 1, self.y + 1,
+                       Point::dis(self.x - 1, self.y + 1, sb.x, sb.y),
+                       Point::dis(self.x - 1, self.y + 1, eb.x, eb.y),
+            ),
         ]
     }
 
-    pub fn set_parent(&mut self, parent: PointType) {
+    pub fn dis(x: i64, y: i64, x1: i64, y1: i64) -> i64 {
+        (x1 - x).abs() + (y - y1).abs()
+    }
+
+    pub fn distance(&self, other: Rc<RefCell<Point>>) -> i64 {
+        let b = other.borrow();
+        Point::dis(self.x, self.y, b.x, b.y)
+    }
+
+    pub fn set_parent(&mut self, parent: Rc<RefCell<Point>>) {
         self.parent = Some(parent)
-    }
-}
-
-impl PartialEq<PointType> for Point {
-    fn eq(&self, other: &PointType) -> bool {
-        self.x == other.borrow().x && self.y == other.borrow().y
-    }
-}
-
-impl PartialEq<Point> for PointType {
-    fn eq(&self, other: &Point) -> bool {
-        other == self
     }
 }
