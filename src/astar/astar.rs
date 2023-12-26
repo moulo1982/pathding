@@ -75,8 +75,9 @@ impl Map for AStar {
                             } else {
                                 let new_g = v.borrow().g + v.borrow().distance(neighbor.clone());
                                 if new_g <= neighbor.borrow().g {
-                                    neighbor.borrow_mut().set_parent(v.clone());
-                                    neighbor.borrow_mut().g = new_g;
+                                    let mut nmb = neighbor.borrow_mut();
+                                    nmb.set_parent(v.clone());
+                                    nmb.set_g(new_g);
                                 }
                                 last = neighbor;
                             }
