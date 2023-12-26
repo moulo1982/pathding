@@ -14,10 +14,6 @@ impl OpenList {
         self.hash_points.push(value)
     }
 
-    pub fn move_insert(&mut self, value: PointType) {
-        self.hash_points.push(value)
-    }
-
     pub fn remove(&mut self, value: &PointType) {
         for i in 0..self.hash_points.len() {
             if self.hash_points[i] == *value {

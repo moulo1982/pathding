@@ -80,7 +80,7 @@ impl Map for AStar {
                     }
 
                     open_list.remove(&v);
-                    close_list.move_insert(v);
+                    close_list.insert(v);
 
                 }
             }
