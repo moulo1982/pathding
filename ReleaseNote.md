@@ -56,5 +56,5 @@ Rust团队承诺2023.12.28发布1.75 [Rust 1.75.0](https://releases.rs/docs/1.75
         内存：
                 64GB DDR4 4800 MHz
 
-        寻路使用tikio异步，默认线程数。
+        寻路使用tokio异步，默认线程数。
 
