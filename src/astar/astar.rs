@@ -2,7 +2,7 @@ use std::sync::{Arc, RwLock};
 //use tokio::fs::File;
 //use tokio::io::AsyncReadExt;
 use crate::errors::my_errors::RetResult;
-use crate::map::{Map, OpenList, Point, PointType};
+use crate::map::{Map, List, Point, PointType};
 
 pub struct  AStar {
     pub map: Box<Vec<Vec<i32>>>,
@@ -39,8 +39,8 @@ impl Map for AStar {
 
     fn find_path(&self, start: PointType, end: PointType) -> Vec<Point> {
 
-        let mut open_list = OpenList::new();
-        let mut close_list = OpenList::new();
+        let mut open_list = List::new();
+        let mut close_list = List::new();
 
         let mut last = end.clone();
 

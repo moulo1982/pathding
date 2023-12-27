@@ -2,14 +2,15 @@ use std::collections::BTreeMap;
 
 use crate::map::PointType;
 
-#[derive(Clone)]
-pub struct OpenList {
+pub struct List {
     hash_points: BTreeMap<i64, Vec<PointType>>,
 }
 
-impl OpenList {
+impl List {
+
+    #[inline]
     pub fn new() -> Self {
-        OpenList{hash_points: BTreeMap::new()}
+        List {hash_points: BTreeMap::new()}
     }
 
     pub fn insert(&mut self, value: PointType) {
@@ -40,6 +41,7 @@ impl OpenList {
         }
     }
 
+    #[inline]
     pub fn len(&self) -> usize {
         self.hash_points.len()
     }
@@ -62,9 +64,4 @@ impl OpenList {
         }
         return false;
     }
-}
-
-
-pub struct CloseList {
-
 }

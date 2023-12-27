@@ -13,6 +13,19 @@ description = """
 一个寻路库，包含AStar和Recast，目前还在开发阶段
 """
 
+[profile.dev]
+codegen-units = 4
+debug = true
+incremental = false
+opt-level = 0
+
+[profile.release]
+lto = true
+codegen-units = 16
+opt-level = 3
+strip = true
+incremental = false
+
 [[example]]
 name = "astar"
 path = "examples/a_star.rs"
