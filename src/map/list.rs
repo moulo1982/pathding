@@ -17,7 +17,9 @@ impl OpenList {
         if let Some(vec) = self.hash_points.get_mut(&f) {
             vec.push(value);
         } else {
-            self.hash_points.insert(f, vec![value]);
+            let mut my_vec: Vec<PointType> = Vec::with_capacity(128);
+            my_vec.push(value);
+            self.hash_points.insert(f, my_vec);
         }
     }
 
