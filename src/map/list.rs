@@ -1,24 +1,39 @@
-use crate::map::{PointType};
+use std::collections::BTreeMap;
+
+use crate::map::PointType;
 
 #[derive(Clone)]
 pub struct OpenList {
-    hash_points: Vec<PointType>,
+    hash_points: BTreeMap<i64, Vec<PointType>>,
 }
 
 impl OpenList {
     pub fn new() -> Self {
-        OpenList{hash_points:Vec::new()}
+        OpenList{hash_points: BTreeMap::new()}
     }
 
     pub fn insert(&mut self, value: PointType) {
-        self.hash_points.push(value)
+        let f = value.borrow().f();
+        if let Some(vec) = self.hash_points.get_mut(&f) {
+            vec.push(value);
+        } else {
+            self.hash_points.insert(f, vec![value]);
+        }
     }
 
     pub fn remove(&mut self, value: &PointType) {
-        for i in 0..self.hash_points.len() {
-            if self.hash_points[i] == *value {
-                self.hash_points.remove(i);
-                break
+
+        let f = value.borrow().f();
+        if let Some(vec) = self.hash_points.get_mut(&f) {
+            for i in 0..vec.len() {
+                if vec[i] == *value {
+                    vec.remove(i);
+                    break
+                }
+            }
+
+            if vec.len() == 0 {
+                self.hash_points.remove(&f);
             }
         }
     }
@@ -28,21 +43,19 @@ impl OpenList {
     }
 
     pub fn min_f(&mut self) -> Option<PointType> {
-
-        if self.hash_points.len() > 0 {
-            self.hash_points.sort_by(|a, b| a.borrow().f().cmp(&b.borrow().f()) );
-            let ret = self.hash_points[0].clone();
-            self.hash_points.remove(0);
-            return Some(ret);
+        if let Some(mut v) = self.hash_points.first_entry() {
+            return v.get_mut().pop();
         }
-
         None
     }
 
-    pub fn contains_point(&self, point: &PointType) -> bool{
-        for i in 0..self.hash_points.len() {
-            if self.hash_points[i] == *point {
-                return true;
+    pub fn contains_point(&mut self, point: &PointType) -> bool{
+        let f = point.borrow().f();
+        if let Some(vec) = self.hash_points.get(&f) {
+            for i in 0..vec.len() {
+                if vec[i] == *point {
+                    return true;
+                }
             }
         }
         return false;
